@@ -61,6 +61,13 @@ class Level(State):
         self.objects.update(self.scroll)
         self.tiles.update(self.scroll)
 
+        # Enemy scroll logic put into level update
+        for e in self.enemies:
+            e.rect.x += self.scroll
+            e.hitbox.x += self.scroll
+            e.left_boundary += self.scroll
+            e.right_boundary += self.scroll
+
         # Check for collision between player's melee attacks and enemy
 
         collisions = pg.sprite.groupcollide(self.player.melee_attacks, self.enemies, False,

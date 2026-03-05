@@ -224,18 +224,8 @@ class Player(pg.sprite.Sprite):
 
         self.range_attacks.update()
 
-        if self.rect.x > SCREEN_WIDTH - SCROLL_THRESH:
-            self.rect.x = SCREEN_WIDTH - SCROLL_THRESH
-            self.scroll = self.scroll_amount
-
         # Scroll by the amount moved horizontally
         self.level_scroll += self.scroll
-
-        for enemy in self.enemies_group:
-            if self.direction == "right":
-                enemy.rect.x -= self.scroll
-            else:
-                enemy.rect.x += self.scroll + 2
 
         return -self.scroll
 
@@ -267,23 +257,35 @@ class Player(pg.sprite.Sprite):
     def move(self):
         """Determines horizontal and scroll movement."""
 
-        if self.movement_pressed:
-            self.counter += 1
+        # Reset player movement and scroll
+        self.dx = 0
+        self.scroll = 0
 
-            if self.left_press and not self.right_press:
-                if self.level_scroll > 0:
-                    self.dx -= self.speed
-                    self.scroll = -self.scroll_amount
+        if not self.movement_pressed:
+            return
 
-            elif self.right_press and not self.left_press:
-                if self.scroll > 5000:
-                    self.dx = 0
-                else:
-                    self.dx += self.speed
-                    self.scroll = self.scroll_amount
-        else:
-            self.dx = 0
-            self.scroll = 0
+        # Walk animation
+        self.counter += 1
+
+        # Move left
+        if self.left_press and not self.right_press:
+            # Move world if player is on the Left
+            if self.rect.x <= SCROLL_THRESH and self.level_scroll > 0:
+                self.dx = 0
+                self.scroll = -self.scroll_amount
+            # Move player
+            else:
+                self.dx = -self.speed
+
+        # Move right
+        elif self.right_press and not self.left_press:
+            # Move world if player is on the right
+            if self.rect.x >= SCREEN_WIDTH - SCROLL_THRESH:
+                self.dx = 0
+                self.scroll = self.scroll_amount
+            # Move player
+            else:
+                self.dx = self.speed
 
     def jump(self):
         """Performs a jump."""
