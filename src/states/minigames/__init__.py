@@ -5,6 +5,7 @@ from .matching_game import Matching
 from .memory import Memory
 from .reaction_time import ReactionTime
 from .reflexes import Reflexes
+from .filler import Filler
 
 __all__ = [
     "ReactionTime",
@@ -13,5 +14,6 @@ __all__ = [
     "FlyingGreen",
     "Calculate",
     "Matching",
-    "ButtonMemory",
+    "ButtonMemory"
+    "Filler",
 ]
