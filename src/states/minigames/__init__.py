@@ -14,6 +14,6 @@ __all__ = [
     "FlyingGreen",
     "Calculate",
     "Matching",
-    "ButtonMemory"
+    "ButtonMemory",
     "Filler",
 ]
