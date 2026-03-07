@@ -13,6 +13,7 @@ from src.states.minigames.calculate import Calculate
 from src.states.minigames.flying_green import FlyingGreen
 from src.states.minigames.matching_game import Matching
 from src.states.minigames.memory import Memory
+from src.states.minigames.filler import Filler
 from src.states.minigames.reaction_time import ReactionTime
 from src.states.minigames.reflexes import Reflexes
 from src.states.state import State, TimedState
