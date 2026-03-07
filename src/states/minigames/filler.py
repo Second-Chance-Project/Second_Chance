@@ -6,9 +6,8 @@ from src.states.minigames.minigame import Minigame
 
 
 class Filler(Minigame):
-
     def __init__(self):
-        instructions = "Click colors to expand your territory. Capture 50% of the board to win!"
+        instructions = "Click colors to expand your territory. Capture more territory than the computer to win!"
         super().__init__(instructions)
 
         self.screen = pg.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
@@ -17,6 +16,7 @@ class Filler(Minigame):
         self.cols = 10
         self.tile_size = 40
 
+        # Colors for the board
         self.colors = [
             (255, 0, 0),
             (0, 255, 0),
@@ -28,109 +28,118 @@ class Filler(Minigame):
 
         self.board = []
         self.player_tiles = set()
+        self.computer_tiles = set()
+
+        self.player_last_color = None
+        self.computer_last_color = None
+
         self.moves = 0
+        self.max_moves = 15
 
         self.generate_board()
         self.create_color_buttons()
 
     def generate_board(self):
-        """Creates a random colored grid."""
-
+        """Creates a random colored grid and sets starting positions."""
+        self.board = []
         for r in range(self.rows):
             row = []
             for c in range(self.cols):
                 row.append(random.randint(0, len(self.colors)-1))
             self.board.append(row)
 
-        self.player_tiles.add((0, 0))
+        # Player starts top-left, computer bottom-right
+        self.player_tiles = {(0, 0)}
+        self.computer_tiles = {(self.rows - 1, self.cols - 1)}
 
     def create_color_buttons(self):
         """Creates clickable color buttons."""
-
         self.color_buttons = []
-
         for i in range(len(self.colors)):
-            rect = pg.Rect(100 + i*60, SCREEN_HEIGHT-80, 50, 50)
+            rect = pg.Rect(100 + i*60, SCREEN_HEIGHT - 80, 50, 50)
             self.color_buttons.append(rect)
 
-    def flood_fill(self, new_color):
+    def flood_fill(self, new_color, tiles):
         """Expands territory using flood fill."""
-
-        queue = list(self.player_tiles)
-
+        queue = list(tiles)
         while queue:
             r, c = queue.pop(0)
-
-            neighbors = [
-                (r+1,c),
-                (r-1,c),
-                (r,c+1),
-                (r,c-1)
-            ]
-
+            neighbors = [(r+1,c),(r-1,c),(r,c+1),(r,c-1)]
             for nr, nc in neighbors:
-
                 if 0 <= nr < self.rows and 0 <= nc < self.cols:
+                    if (nr, nc) not in tiles and self.board[nr][nc] == new_color:
+                        tiles.add((nr, nc))
+                        queue.append((nr, nc))
 
-                    if (nr,nc) not in self.player_tiles:
-
-                        if self.board[nr][nc] == new_color:
-                            self.player_tiles.add((nr,nc))
-                            queue.append((nr,nc))
-
-        for r,c in self.player_tiles:
+        for r, c in tiles:
             self.board[r][c] = new_color
 
-        self.moves += 1
+    def computer_move(self):
+        """Basic AI: pick a random neighboring color not used by player this turn."""
+        neighboring_colors = set()
+        for r, c in self.computer_tiles:
+            for dr, dc in [(0,1),(1,0),(-1,0),(0,-1)]:
+                nr, nc = r+dr, c+dc
+                if 0 <= nr < self.rows and 0 <= nc < self.cols:
+                    color = self.board[nr][nc]
+                    if color != self.player_last_color and (nr,nc) not in self.computer_tiles:
+                        neighboring_colors.add(color)
+        if neighboring_colors:
+            choice = random.choice(list(neighboring_colors))
+            self.flood_fill(choice, self.computer_tiles)
+            self.computer_last_color = choice
 
     def handle_events(self, events):
         super().handle_events(events)
 
         for event in events:
-
             if event.type == pg.MOUSEBUTTONDOWN:
-
                 for i, button in enumerate(self.color_buttons):
-
                     if button.collidepoint(event.pos):
-                        self.flood_fill(i)
+                        # Player cannot pick computer's last color
+                        if i != self.computer_last_color:
+                            self.flood_fill(i, self.player_tiles)
+                            self.player_last_color = i
+                            self.computer_move()
+                            self.moves += 1
 
-        if len(self.player_tiles) > (self.rows*self.cols)//2:
-            self.won = True
-
-        if self.moves > 15:
-            self.won = False
+        # Win condition: player has more tiles or max moves reached
+        if len(self.player_tiles) + len(self.computer_tiles) == self.rows * self.cols or self.moves >= self.max_moves:
+            self.won = len(self.player_tiles) > len(self.computer_tiles)
 
     def update(self, events):
         super().update(events)
 
     def draw(self):
         super().draw()
-
         self.draw_grid()
         self.draw_buttons()
 
     def draw_grid(self):
-
+        """Draw the board and highlight player and computer territories."""
         for r in range(self.rows):
             for c in range(self.cols):
-
                 color = self.colors[self.board[r][c]]
+                x = c * self.tile_size + 200
+                y = r * self.tile_size + 120
+                pg.draw.rect(self.screen, color, [x, y, self.tile_size-2, self.tile_size-2])
 
-                x = c*self.tile_size + 200
-                y = r*self.tile_size + 120
+        # Draw player tiles
+        for r, c in self.player_tiles:
+            x = c * self.tile_size + 200
+            y = r * self.tile_size + 120
+            pg.draw.rect(self.screen, (255, 255, 255), [x, y, self.tile_size-2, self.tile_size-2], 3)
 
-                pg.draw.rect(self.screen, color, [x,y,self.tile_size-2,self.tile_size-2])
-
-                if (r,c) in self.player_tiles:
-                    pg.draw.rect(self.screen, (255,255,255), [x,y,self.tile_size-2,self.tile_size-2], 3)
+        # Draw computer tiles
+        for r, c in self.computer_tiles:
+            x = c * self.tile_size + 200
+            y = r * self.tile_size + 120
+            pg.draw.rect(self.screen, (50, 50, 50), [x, y, self.tile_size-2, self.tile_size-2], 3)
 
     def draw_buttons(self):
-
         for i, rect in enumerate(self.color_buttons):
-
             pg.draw.rect(self.screen, self.colors[i], rect)
 
         font = pg.font.Font('freesansbold.ttf', 24)
-        text = font.render(f"Moves: {self.moves}", True, (255,255,255))
+        text = font.render(f"Moves: {self.moves}", True, (255, 255, 255))
         self.screen.blit(text, (600, SCREEN_HEIGHT-70))
