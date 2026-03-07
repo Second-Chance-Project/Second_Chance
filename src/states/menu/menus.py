@@ -134,6 +134,7 @@ class StartMenu(State):
         self.menu.add.button('Tracking', self.manager.set_state, FlyingGreen)
         self.menu.add.button('Calculate', self.manager.set_state, Calculate)
         self.menu.add.button('ButtonMemory', self.manager.set_state, ButtonMemory)
+        self.menu.add.button('Filler', self.manager.set_state, Filler)
 
         self.menu.add.button('Back', self.main_menu)
 
