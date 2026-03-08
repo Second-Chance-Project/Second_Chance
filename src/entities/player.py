@@ -54,6 +54,7 @@ class Player(pg.sprite.Sprite):
         self.is_moving = False
         self.on_ground = False
         self.is_jumping = False
+        self.is_sprinting = False # sprint
         self.direction = "right"
         self.last_ground_pos = pg.Rect(0, 0, 0, 0)
 
@@ -64,6 +65,7 @@ class Player(pg.sprite.Sprite):
         self.movement_pressed = False
         self.melee_pressed = False
         self.ranged_pressed = False
+        self.sprint_press = False # sprint
 
         # Animation variables
         self.index = 0
@@ -72,6 +74,8 @@ class Player(pg.sprite.Sprite):
         self.scroll = 0
         self.level_scroll = 0
         self.scroll_amount = 3
+        self.speed = 2 # sprint
+        self.sprint_speed = 5 # sprint
 
         self.platform_group = platform_group
         self.portal_group = portal_group
@@ -122,6 +126,7 @@ class Player(pg.sprite.Sprite):
 
         # Define hitbox
         self.hitbox = pg.Rect(x, y, self.rect.width, self.rect.height)
+
 
     def update(self):
         """Updates the position of the player's rect.
