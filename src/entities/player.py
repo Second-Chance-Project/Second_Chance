@@ -242,6 +242,7 @@ class Player(pg.sprite.Sprite):
 
         self.melee_pressed = keys[pg.K_q] or mouse_buttons[0]  # Q and left click for melee attack
         self.ranged_pressed = keys[pg.K_e] or mouse_buttons[2]  # E and right click for ranged attack
+        self.sprint_pressed = keys[pg.K_LSHIFT] # left shift for sprint
 
         self.up_press = keys[pg.K_SPACE] or keys[pg.K_UP] or keys[pg.K_w]
         self.left_press = keys[pg.K_LEFT] or keys[pg.K_a]
@@ -249,6 +250,7 @@ class Player(pg.sprite.Sprite):
         self.movement_pressed = self.left_press or self.right_press
 
         self.is_jumping = self.up_press
+        self.is_sprinting = self.sprint_pressed # sprinting when sprint key pressed
 
         if self.movement_pressed:
             self.is_moving = True
@@ -291,6 +293,7 @@ class Player(pg.sprite.Sprite):
             # Move player
             else:
                 self.dx = self.speed
+
 
     def jump(self):
         """Performs a jump."""
