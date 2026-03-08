@@ -110,7 +110,7 @@ class Player(pg.sprite.Sprite):
         self.font = pg.font.Font(None, 20)  # TODO
 
         self.speed = 2
-        self.sprint_speed = 5 # sprint
+        self.sprint_speed = 7 # sprint
         self.gravity = 0.5
         self.vel_y = 0
         self.jump_strength = -13
@@ -275,9 +275,9 @@ class Player(pg.sprite.Sprite):
 
         # Determine walk vs sprint
         if self.is_sprinting:
-            self.sprint_speed
+            current_speed = self.sprint_speed
         else:
-            self.speed
+            current_speed = self.speed
         
 
         # Move left
@@ -288,7 +288,7 @@ class Player(pg.sprite.Sprite):
                 self.scroll = -self.scroll_amount
             # Move player
             else:
-                self.dx = -self.speed
+                self.dx = -current_speed
 
         # Move right
         elif self.right_press and not self.left_press:
@@ -298,7 +298,7 @@ class Player(pg.sprite.Sprite):
                 self.scroll = self.scroll_amount
             # Move player
             else:
-                self.dx = self.speed
+                self.dx = current_speed
 
 
     def jump(self):
