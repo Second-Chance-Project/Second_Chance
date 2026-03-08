@@ -272,6 +272,12 @@ class Player(pg.sprite.Sprite):
         # Walk animation
         self.counter += 1
 
+        # Determine walk vs sprint
+        if self.is_sprinting:
+            current_speed = self.sprint_speed
+        else:
+            current_speed = self.speed
+
         # Move left
         if self.left_press and not self.right_press:
             # Move world if player is on the Left
@@ -280,7 +286,7 @@ class Player(pg.sprite.Sprite):
                 self.scroll = -self.scroll_amount
             # Move player
             else:
-                self.dx = -self.speed
+                self.dx = -current_speed
 
         # Move right
         elif self.right_press and not self.left_press:
@@ -290,7 +296,7 @@ class Player(pg.sprite.Sprite):
                 self.scroll = self.scroll_amount
             # Move player
             else:
-                self.dx = self.speed
+                self.dx = current_speed
 
     def jump(self):
         """Performs a jump."""
