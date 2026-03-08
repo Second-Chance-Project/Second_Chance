@@ -54,6 +54,7 @@ class Player(pg.sprite.Sprite):
         self.is_moving = False
         self.on_ground = False
         self.is_jumping = False
+        self.is_sprinting = False # sprint
         self.direction = "right"
         self.last_ground_pos = pg.Rect(0, 0, 0, 0)
 
@@ -64,6 +65,7 @@ class Player(pg.sprite.Sprite):
         self.movement_pressed = False
         self.melee_pressed = False
         self.ranged_pressed = False
+        self.sprint_press = False # sprint
 
         # Animation variables
         self.index = 0
@@ -108,6 +110,7 @@ class Player(pg.sprite.Sprite):
         self.font = pg.font.Font(None, 20)  # TODO
 
         self.speed = 2
+        self.sprint_speed = 7 # sprint
         self.gravity = 0.5
         self.vel_y = 0
         self.jump_strength = -13
