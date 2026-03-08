@@ -74,8 +74,6 @@ class Player(pg.sprite.Sprite):
         self.scroll = 0
         self.level_scroll = 0
         self.scroll_amount = 3
-        self.speed = 2 # sprint
-        self.sprint_speed = 5 # sprint
 
         self.platform_group = platform_group
         self.portal_group = portal_group
@@ -112,6 +110,7 @@ class Player(pg.sprite.Sprite):
         self.font = pg.font.Font(None, 20)  # TODO
 
         self.speed = 2
+        self.sprint_speed = 5 # sprint
         self.gravity = 0.5
         self.vel_y = 0
         self.jump_strength = -13
@@ -273,6 +272,13 @@ class Player(pg.sprite.Sprite):
 
         # Walk animation
         self.counter += 1
+
+        # Determine walk vs sprint
+        if self.is_sprinting:
+            self.sprint_speed
+        else:
+            self.speed
+        
 
         # Move left
         if self.left_press and not self.right_press:
