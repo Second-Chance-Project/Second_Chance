@@ -54,6 +54,7 @@ class Player(pg.sprite.Sprite):
         self.is_moving = False
         self.on_ground = False
         self.is_jumping = False
+        self.is_sprinting = False # sprint
         self.direction = "right"
         self.last_ground_pos = pg.Rect(0, 0, 0, 0)
 
@@ -64,6 +65,7 @@ class Player(pg.sprite.Sprite):
         self.movement_pressed = False
         self.melee_pressed = False
         self.ranged_pressed = False
+        self.sprint_press = False # sprint
 
         # Animation variables
         self.index = 0
@@ -108,6 +110,7 @@ class Player(pg.sprite.Sprite):
         self.font = pg.font.Font(None, 20)  # TODO
 
         self.speed = 2
+        self.sprint_speed = 7 # sprint
         self.gravity = 0.5
         self.vel_y = 0
         self.jump_strength = -13
@@ -237,6 +240,7 @@ class Player(pg.sprite.Sprite):
 
         self.melee_pressed = keys[pg.K_q] or mouse_buttons[0]  # Q and left click for melee attack
         self.ranged_pressed = keys[pg.K_e] or mouse_buttons[2]  # E and right click for ranged attack
+        self.sprint_pressed = keys[pg.K_LSHIFT] # left shift for sprint
 
         self.up_press = keys[pg.K_SPACE] or keys[pg.K_UP] or keys[pg.K_w]
         self.left_press = keys[pg.K_LEFT] or keys[pg.K_a]
@@ -244,6 +248,7 @@ class Player(pg.sprite.Sprite):
         self.movement_pressed = self.left_press or self.right_press
 
         self.is_jumping = self.up_press
+        self.is_sprinting = self.sprint_pressed # sprinting when sprint key pressed
 
         if self.movement_pressed:
             self.is_moving = True
@@ -267,6 +272,12 @@ class Player(pg.sprite.Sprite):
         # Walk animation
         self.counter += 1
 
+        # Determine walk vs sprint
+        if self.is_sprinting:
+            current_speed = self.sprint_speed
+        else:
+            current_speed = self.speed
+
         # Move left
         if self.left_press and not self.right_press:
             # Move world if player is on the Left
@@ -275,7 +286,7 @@ class Player(pg.sprite.Sprite):
                 self.scroll = -self.scroll_amount
             # Move player
             else:
-                self.dx = -self.speed
+                self.dx = -current_speed
 
         # Move right
         elif self.right_press and not self.left_press:
@@ -285,7 +296,7 @@ class Player(pg.sprite.Sprite):
                 self.scroll = self.scroll_amount
             # Move player
             else:
-                self.dx = self.speed
+                self.dx = current_speed
 
     def jump(self):
         """Performs a jump."""
