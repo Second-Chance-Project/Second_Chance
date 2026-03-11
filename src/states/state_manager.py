@@ -1,4 +1,5 @@
 from .menu.title_screen import TitleScreen
+from .menu.latest_news_screen import NewsScreen
 from .state import State
 
 
@@ -12,11 +13,11 @@ class StateManager:
     """
 
     def __init__(self):
-        """Create state stack and initialize game state to the title screen."""
+        """Create state stack and initialize game state to the news screen."""
 
         self.state = None
         self.state_stack = []
-        self.set_state(TitleScreen)
+        self.set_state(NewsScreen)
 
     def set_state(self, state, save_prev=False, clear=False):
         """Sets the current game state to another state.
