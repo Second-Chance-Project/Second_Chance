@@ -13,6 +13,7 @@ from src.states.minigames.calculate import Calculate
 from src.states.minigames.flying_green import FlyingGreen
 from src.states.minigames.matching_game import Matching
 from src.states.minigames.memory import Memory
+from src.states.minigames.filler import Filler
 from src.states.minigames.reaction_time import ReactionTime
 from src.states.minigames.reflexes import Reflexes
 from src.states.state import State, TimedState
@@ -133,6 +134,7 @@ class StartMenu(State):
         self.menu.add.button('Tracking', self.manager.set_state, FlyingGreen)
         self.menu.add.button('Calculate', self.manager.set_state, Calculate)
         self.menu.add.button('ButtonMemory', self.manager.set_state, ButtonMemory)
+        self.menu.add.button('Filler', self.manager.set_state, Filler)
 
         self.menu.add.button('Back', self.main_menu)
 
